@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views 
+from admin_koperasi import views as admin_views  # Import views dari admin_koperasi
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'), 
+    path('', admin_views.login_view, name='login'),  # Langsung ke login_view
+    path('admin-koperasi/', include('admin_koperasi.urls')),
     path('anggota/', include('anggota.urls')),
     path('tabungan/', include('tabungan.urls')),
     path('pinjaman/', include('pinjaman.urls')),
@@ -28,7 +29,6 @@ urlpatterns = [
     path('penarikan/', include('penarikan.urls')),
     path('shu/', include('shu.urls')),
     path('laporan/', include('laporan.urls')),
-    path('auth/', include('admin_koperasi.urls')),
 ]
 
 
