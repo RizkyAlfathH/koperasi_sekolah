@@ -4,7 +4,7 @@ from tabungan.models import Tabungan
 class TransaksiTabungan(models.Model):
     id_tabungan = models.ForeignKey(Tabungan, on_delete=models.CASCADE)
     tanggal = models.DateField()
-    jenis_transaksi = models.CharField(max_length=20)  # setor / tarik
+    jenis_transaksi = models.CharField(max_length=20)
     jumlah = models.DecimalField(max_digits=12, decimal_places=2)
     keterangan = models.TextField()
 

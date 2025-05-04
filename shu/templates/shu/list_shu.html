@@ -1,0 +1,42 @@
+<!-- templates/shu/list_shu.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar SHU</title>
+</head>
+<body>
+    <h1>Daftar SHU</h1>
+
+    <a href="{% url 'shu:add_shu' %}">Tambah SHU Baru</a>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID Anggota</th>
+                <th>Tahun</th>
+                <th>Jumlah SHU Simpanan</th>
+                <th>Jumlah SHU Pinjaman</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shu in shu_list %}
+            <tr>
+                <td>{{ shu.id_anggota }}</td>
+                <td>{{ shu.tahun }}</td>
+                <td>{{ shu.jumlah_shu_simpanan }}</td>
+                <td>{{ shu.jumlah_shu_pinjaman }}</td>
+                <td>
+                    <a href="{% url 'shu:edit_shu' shu.id %}" >Edit</a>
+                    <a href="{% url 'shu:delete_shu' shu.id %}" >Hapus</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Belum ada data SHU.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

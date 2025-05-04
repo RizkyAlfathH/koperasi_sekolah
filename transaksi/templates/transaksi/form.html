@@ -1,0 +1,16 @@
+<!-- templates/transaksi/form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Transaksi</title>
+</head>
+<body>
+    <h1>{{ form_title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Simpan</button>
+        <a href="{% url 'transaksi:transaksi_list' %}">Batal</a>
+    </form>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!-- templates/transaksi/list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Transaksi</title>
+</head>
+<body>
+    <h1>Daftar Transaksi Tabungan</h1>
+    <a href="{% url 'transaksi:transaksi_create' %}">Tambah Transaksi</a>
+    <table border="1">
+        <tr>
+            <th>ID Tabungan</th>
+            <th>Tanggal</th>
+            <th>Jenis</th>
+            <th>Jumlah</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+        </tr>
+        {% for transaksi in transaksis %}
+        <tr>
+            <td>{{ transaksi.id_tabungan }}</td>
+            <td>{{ transaksi.tanggal }}</td>
+            <td>{{ transaksi.jenis_transaksi }}</td>
+            <td>{{ transaksi.jumlah }}</td>
+            <td>{{ transaksi.keterangan }}</td>
+            <td>
+                <a href="{% url 'transaksi_update' transaksi.id %}">Edit</a> |
+                <a href="{% url 'transaksi_delete' transaksi.id %}">Hapus</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">Belum ada transaksi.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

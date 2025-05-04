@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Hapus Tabungan</title>
+</head>
+<body>
+    <h1>Konfirmasi Hapus Tabungan</h1>
+    <p>Apakah kamu yakin ingin menghapus tabungan milik <strong>{{ tabungan.id_anggota.nama }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Ya, Hapus</button>
+        <a href="{% url 'kelola_tabungan' %}">Batal</a>
+    </form>
+</body>
+</html>

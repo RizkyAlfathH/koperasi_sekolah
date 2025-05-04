@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Manajemen Tabungan</title>
+</head>
+<body>
+    <h1>Manajemen Tabungan</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID Tabungan</th>
+                <th>Nama Anggota</th>
+                <th>NIP</th>
+                <th>Jumlah Pokok</th>
+                <th>Jumlah Wajib</th>
+                <th>Jumlah Sukarela</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tabungan in daftar_tabungan %}
+            <tr>
+                <td>{{ tabungan.id }}</td>
+                <td>{{ tabungan.id_anggota.nama }}</td>
+                <td>{{ tabungan.id_anggota.nip }}</td>
+                <td>{{ tabungan.jumlah_pokok }}</td>
+                <td>{{ tabungan.jumlah_wajib }}</td>
+                <td>{{ tabungan.jumlah_sukarela }}</td>
+                <td>
+                    <a href="{% url 'edit_tabungan' tabungan.id %}">Edit</a> |
+                    <a href="{% url 'hapus_tabungan' tabungan.id %}">Hapus</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

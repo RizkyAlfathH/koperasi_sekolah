@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Tabungan</title>
+</head>
+<body>
+    <h1>Edit Tabungan</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label>Nama Anggota:</label>
+        <input type="text" value="{{ tabungan.id_anggota.nama }}" disabled><br><br>
+
+        <label>Jenis Tabungan:</label>
+        <select name="jenis">
+            <option value="pokok" {% if tabungan.jenis == "pokok" %}selected{% endif %}>Pokok</option>
+            <option value="wajib" {% if tabungan.jenis == "wajib" %}selected{% endif %}>Wajib</option>
+            <option value="sukarela" {% if tabungan.jenis == "sukarela" %}selected{% endif %}>Sukarela</option>
+        </select><br><br>
+
+        <label>Jumlah Pokok:</label>
+        <input type="number" name="jumlah_pokok" value="{{ tabungan.jumlah_pokok }}"><br><br>
+
+        <label>Jumlah Wajib:</label>
+        <input type="number" name="jumlah_wajib" value="{{ tabungan.jumlah_wajib }}"><br><br>
+
+        <label>Jumlah Sukarela:</label>
+        <input type="number" name="jumlah_sukarela" value="{{ tabungan.jumlah_sukarela }}"><br><br>
+
+        <button type="submit">Simpan</button>
+        <a href="{% url 'kelola_tabungan' %}">Batal</a>
+    </form>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!-- templates/transaksi/confirm_delete.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hapus Transaksi</title>
+</head>
+<body>
+    <h1>Konfirmasi Hapus</h1>
+    <p>Apakah kamu yakin ingin menghapus transaksi ini?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Ya, Hapus</button>
+        <a href="{% url 'transaksi_list' %}">Batal</a>
+    </form>
+</body>
+</html>

@@ -8,6 +8,9 @@ class Tabungan(models.Model):
     jenis = models.CharField(max_length=20, choices=jenis_choices)
     jumlah_pokok = models.DecimalField(max_digits=12, decimal_places=2)
     jumlah_wajib = models.DecimalField(max_digits=12, decimal_places=2)
+    jumlah_sukarela = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+
 
     def __str__(self):
         return f"Tabungan {self.id_anggota}"
