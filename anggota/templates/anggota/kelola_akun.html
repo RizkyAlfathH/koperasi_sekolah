@@ -1,3 +1,4 @@
+<!-- templates/anggota/kelola_akun.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,34 +7,39 @@
 </head>
 <body>
     <h1>Daftar Admin</h1>
+
     <table border="1">
         <tr>
             <th>Username</th>
-            <th>Password</th>
+            <th>Role</th>
             <th>Aksi</th>
         </tr>
         {% for admin in admins %}
         <tr>
             <td>{{ admin.username }}</td>
-            <td>{{ admin.password }}</td> <!-- Tampilkan password -->
+            <td>{{ admin.role }}</td>
             <td>
-                {% comment %} <a href="{% url 'hapus_admin' admin.id %}">Hapus</a> {% endcomment %}
-            </td>
+                <a href="{% url 'edit_admin' id_anggota=admin.id %}">Edit</a> |
+                <a href="{% url 'hapus_admin' id_anggota=admin.id %}" onclick="return confirm('Yakin ingin menghapus admin ini?');">Hapus</a>
+            </td>            
         </tr>
         {% endfor %}
     </table>
 
+<a href="{% url 'tambah_admin' %}">Tambah Admin</a>
+
     <h1>Daftar Anggota</h1>
+    <a href="{% url 'tambah_anggota' %}">+ Tambah Anggota</a>
     <table border="1">
         <tr>
-            <th>ID Anggota</th>
+            <th>ID</th>
             <th>NIP</th>
             <th>Nama</th>
             <th>Alamat</th>
             <th>No Tlp</th>
             <th>Email</th>
             <th>Jenis Kelamin</th>
-            <th>Tanggal Daftar</th>
+            <th>Tgl Daftar</th>
             <th>Status</th>
             <th>Alasan Tidak Aktif</th>
             <th>Aksi</th>
@@ -51,7 +57,8 @@
             <td>{{ anggota.status }}</td>
             <td>{{ anggota.alasan_tidak_aktif }}</td>
             <td>
-                {% comment %} <a href="{% url 'hapus_anggota' anggota.id %}">Hapus</a> {% endcomment %}
+                <a href="{% url 'edit_anggota' anggota.id_anggota %}">Edit</a> |
+                <a href="{% url 'hapus_anggota' anggota.id_anggota %}" onclick="return confirm('Yakin ingin menghapus anggota ini?');">Hapus</a>
             </td>
         </tr>
         {% endfor %}
