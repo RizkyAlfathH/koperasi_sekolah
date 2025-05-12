@@ -43,3 +43,7 @@ def login_view(request):
             return render(request, 'admin_koperasi/login.html', {'error': 'Username atau password salah.'})
 
     return render(request, 'admin_koperasi/login.html')
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('login')

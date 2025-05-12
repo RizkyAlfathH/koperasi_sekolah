@@ -20,7 +20,8 @@ from admin_koperasi import views as admin_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', admin_views.login_view, name='login'),  
+    path('', admin_views.login_view, name='login'),
+    path('logout/', admin_views.logout_view, name='logout'),
     path('admin-koperasi/', include('admin_koperasi.urls')),
     path('anggota/', include('anggota.urls')),
     path('tabungan/', include('tabungan.urls')),  
