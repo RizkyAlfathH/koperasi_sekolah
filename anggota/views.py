@@ -7,11 +7,13 @@ from .forms import AdminForm, AnggotaForm
 def kelola_akun(request):
     admins = Admin.objects.all()
     anggotas = Anggota.objects.all()
-
-    context = {
-        'admins': admins,
-        'anggotas': anggotas
-    }
+    if request.session.get('admin_role') == 'sekretaris':
+        context = {'anggotas': anggotas}
+    else:
+        context = {
+            'admins': admins,
+            'anggotas': anggotas
+        }
     return render(request, 'anggota/kelola_akun.html', context)
 
 
