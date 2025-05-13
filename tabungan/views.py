@@ -14,14 +14,12 @@ def edit_tabungan(request, id):
         tabungan.jumlah_wajib = request.POST.get('jumlah_wajib')
         tabungan.jumlah_sukarela = request.POST.get('jumlah_sukarela')
         tabungan.save()
-        return redirect('tabungan:data_tabungan')
-    
+        return redirect('tabungan:daftar_tabungan')    
     return render(request, 'tabungan/edit_tabungan.html', {'tabungan': tabungan})
 
 def hapus_tabungan(request, id):
     tabungan = get_object_or_404(Tabungan, id=id)
     if request.method == 'POST':
         tabungan.delete()
-        return redirect('tabungan:data_tabungan')
-    
+        return redirect('tabungan:daftar_tabungan')   
     return render(request, 'tabungan/hapus_tabungan.html', {'tabungan': tabungan})
