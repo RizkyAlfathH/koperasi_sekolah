@@ -3,14 +3,52 @@
 <html>
 <head>
     <title>Form Transaksi</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>{{ form_title }}</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <label for="id_anggota">Pilih Anggota (NIP - Nama)</label>
+        {{ form.anggota }}  <!-- pastikan di forms.py ada field anggota, bukan tabungan -->
+
+        <label for="id_nama_anggota">Nama Anggota</label>
+        <input type="text" id="id_nama_anggota" class="readonly" readonly>
+
+        <label for="{{ form.jenis.id_for_label }}">Jenis Transaksi</label>
+        {{ form.jenis }}
+
+        <label for="{{ form.tanggal.id_for_label }}">Tanggal</label>
+        {{ form.tanggal }}
+
+        <label for="{{ form.jumlah.id_for_label }}">Jumlah</label>
+        {{ form.jumlah }}
+
+        <label for="{{ form.keterangan.id_for_label }}">Keterangan</label>
+        {{ form.keterangan }}
+
         <button type="submit">Simpan</button>
         <a href="{% url 'transaksi:transaksi_list' %}">Batal</a>
     </form>
+
+    <script>
+        $('#id_anggota').change(function(){
+            var nip = $(this).val();
+            if(nip){
+                $.ajax({
+                    url: '/get_nama_anggota/',
+                    data: {
+                        'nip': nip
+                    },
+                    success: function(data){
+                        $('#id_nama_anggota').val(data.nama);
+                    }
+                });
+            } else {
+                $('#id_nama_anggota').val('');
+            }
+        });
+    </script>
 </body>
 </html>

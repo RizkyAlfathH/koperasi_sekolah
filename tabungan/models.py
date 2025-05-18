@@ -1,6 +1,7 @@
 from django.db import models
 from anggota.models import Anggota
 
+
 class Tabungan(models.Model):
     jenis_choices = [('pokok', 'Pokok'), ('wajib', 'Wajib'), ('sukarela', 'Sukarela')]
 
