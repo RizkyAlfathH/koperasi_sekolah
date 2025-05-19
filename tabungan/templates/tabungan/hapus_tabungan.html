@@ -11,7 +11,7 @@
     <form method="POST">
         {% csrf_token %}
         <button type="submit">Ya, Hapus</button>
-        <a href="{% url 'kelola_tabungan' %}">Batal</a>
+        <a href="{% url 'tabungan:daftar_tabungan' %}">Batal</a>
     </form>
 </body>
 </html>

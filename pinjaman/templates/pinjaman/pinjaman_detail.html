@@ -1,0 +1,19 @@
+<!-- templates/pinjaman/pinjaman_detail.html -->
+<h2>Detail Pinjaman</h2>
+<p><strong>Anggota:</strong> {{ pinjaman.id_anggota.nama }}</p>
+<p><strong>Jumlah:</strong> {{ pinjaman.jumlah_pinjaman }}</p>
+<p><strong>Bunga:</strong> {{ pinjaman.bunga }}%</p>
+<p><strong>Jumlah Bayar:</strong> {{ pinjaman.jumlah_bayar }}</p>
+<p><strong>Status:</strong> {{ pinjaman.status }}</p>
+
+<h3>Riwayat Pembayaran</h3>
+<ul>
+  {% for h in history %}
+    <li>{{ h.tanggal_bayar }} - Rp{{ h.jumlah_bayar }}</li>
+  {% empty %}
+    <li>Belum ada pembayaran</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'pinjaman:bayar' pinjaman.pk %}">Bayar Pinjaman</a> |
+<a href="{% url 'pinjaman:list' %}">Kembali</a>

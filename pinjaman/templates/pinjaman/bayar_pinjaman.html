@@ -1,0 +1,8 @@
+<!-- templates/pinjaman/bayar_pinjaman.html -->
+<h2>Bayar Pinjaman: {{ pinjaman }}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Bayar</button>
+</form>
+<a href="{% url 'pinjaman:detail' pk=pinjaman.pk %}">Kembali</a>

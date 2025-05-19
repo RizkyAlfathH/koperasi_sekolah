@@ -1,0 +1,80 @@
+<!-- templates/pinjaman/pinjaman_form.html -->
+<h2>Form Tambah Pinjaman</h2>
+
+<form method="post">
+  {% csrf_token %}
+
+  <p>
+    <label for="id_id_anggota">Nama Anggota:</label><br>
+    {{ form.id_anggota }}
+  </p>
+
+  <p>
+    <label for="id_tanggal_pinjaman">Tanggal Pinjam:</label><br>
+    {{ form.tanggal_pinjaman }}
+  </p>
+
+  <p>
+    <label for="id_jenis_pinjaman">Jenis Pinjaman:</label><br>
+    {{ form.jenis_pinjaman }}
+  </p>
+
+  <p>
+    <label for="id_jumlah">Jumlah Pinjaman:</label><br>
+    {{ form.jumlah }}
+  </p>
+
+  <p>
+    <label id="jasa-label" for="id_jasa">Jasa Reguler (1%):</label><br>
+    {{ form.jasa }}
+  </p>
+
+  <p>
+    <label for="id_jatuh_tempo">Jatuh Tempo:</label><br>
+    {{ form.jatuh_tempo }}
+  </p>
+
+  <p>
+    <label for="id_status">Status Pembayaran:</label><br>
+    {{ form.status }}
+  </p>
+
+  <button type="submit">Simpan</button>
+</form>
+
+<a href="{% url 'pinjaman:list' %}">Kembali ke daftar</a>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const jenisField = document.getElementById("id_jenis_pinjaman");
+    const jumlahField = document.getElementById("id_jumlah");
+    const jasaLabel = document.getElementById("jasa-label");
+    const jasaField = document.getElementById("id_jasa");
+
+    function updateLabelDanHitungJasa() {
+        const jenis = jenisField.value;
+        const jumlah = parseFloat(jumlahField.value) || 0;
+        let bunga = 0;
+        let label = "Jasa";
+
+        if (jenis === "reguler") {
+            bunga = 0.01;
+            label = "Jasa Reguler (1%)";
+        } else if (jenis === "usaha") {
+            bunga = 0.015;
+            label = "Jasa Usaha (1.5%)";
+        } else if (jenis === "barang") {
+            bunga = 0.02;
+            label = "Jasa Barang (2%)";
+        }
+
+        jasaLabel.textContent = label;
+        jasaField.value = (jumlah * bunga).toFixed(2);
+    }
+
+    jenisField.addEventListener("change", updateLabelDanHitungJasa);
+    jumlahField.addEventListener("input", updateLabelDanHitungJasa);
+
+    updateLabelDanHitungJasa(); // initial on load
+});
+</script>

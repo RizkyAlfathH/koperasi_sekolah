@@ -1,36 +1,57 @@
+# pinjaman/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pinjaman, HistoryPembayaran
-from django.http import HttpResponse
+from .forms import PinjamanForm, HistoryPembayaranForm
+from decimal import Decimal
+
 
 def pinjaman_list(request):
-    pinjaman_list = Pinjaman.objects.all()
-    return render(request, 'pinjaman/pinjaman_list.html', {'pinjaman_list': pinjaman_list})
+    pinjaman_qs = Pinjaman.objects.all()
 
-def pinjaman_detail(request, pinjaman_id):
-    pinjaman = get_object_or_404(Pinjaman, id=pinjaman_id)
-    return render(request, 'pinjaman/pinjaman_detail.html', {'pinjaman': pinjaman})
-
-def bayar_pinjaman(request, pinjaman_id):
-    pinjaman = get_object_or_404(Pinjaman, id=pinjaman_id)
-    
-    if request.method == 'POST':
-        jumlah_bayar = request.POST['jumlah_bayar']
-        metode_pembayaran = request.POST['metode_pembayaran']
+    pinjaman_list = []
+    for p in pinjaman_qs:
+        total_pokok = (p.jumlah_reguler or Decimal('0')) + (p.jumlah_usaha or Decimal('0')) + (p.jumlah_barang or Decimal('0'))
         
-        # Simpan riwayat pembayaran
-        pembayaran = HistoryPembayaran(
-            id_pinjaman=pinjaman,
-            tanggal_bayar=request.POST.get('tanggal_bayar', pinjaman.tanggal_pinjaman),
-            jumlah_bayar=jumlah_bayar,
-            metode_pembayaran=metode_pembayaran
-        )
-        pembayaran.save()
+        # Hitung jasa 10% dari total pokok
+        jasa = total_pokok * Decimal('0.1')
 
-        # Update status pinjaman jika sudah lunas
-        if pinjaman.jumlah_bayar <= pinjaman.jumlah_pinjaman:
-            pinjaman.status = 'lunas'
-            pinjaman.save()
+        p.jasa = jasa
+        p.total = total_pokok + jasa
 
-        return redirect('pinjaman_detail', pinjaman_id=pinjaman.id)
-    
-    return render(request, 'pinjaman/bayar_pinjaman.html', {'pinjaman': pinjaman})
+        pinjaman_list.append(p)
+
+    context = {
+        'pinjaman_list': pinjaman_list,
+    }
+    return render(request, 'pinjaman/pinjaman_list.html', context)
+
+def pinjaman_detail(request, pk):
+    pinjaman = get_object_or_404(Pinjaman, pk=pk)
+    history = HistoryPembayaran.objects.filter(id_pinjaman=pinjaman)
+    return render(request, 'pinjaman/pinjaman_detail.html', {
+        'pinjaman': pinjaman,
+        'history': history
+    })
+
+def tambah_pinjaman(request):
+    if request.method == 'POST':
+        form = PinjamanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('pinjaman:list')
+    else:
+        form = PinjamanForm()
+    return render(request, 'pinjaman/pinjaman_form.html', {'form': form})
+
+def bayar_pinjaman(request, pk):
+    pinjaman = get_object_or_404(Pinjaman, pk=pk)
+    if request.method == 'POST':
+        form = HistoryPembayaranForm(request.POST)
+        if form.is_valid():
+            pembayaran = form.save(commit=False)
+            pembayaran.id_pinjaman = pinjaman
+            pembayaran.save()
+            return redirect('pinjaman:detail', pk=pk)
+    else:
+        form = HistoryPembayaranForm(initial={'id_pinjaman': pinjaman})
+    return render(request, 'pinjaman/bayar_pinjaman.html', {'form': form, 'pinjaman': pinjaman})

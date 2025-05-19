@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Form Tabungan</title>
+</head>
+<body>
+    <h1>Form Tambah Tabungan</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="nip">NIP:</label>
+        <input type="text" name="nip" id="nip" list="nip-list" required>
+        <datalist id="nip-list">
+            {% for anggota in anggota_list %}
+            <option value="{{ anggota.nip }}" data-nama="{{ anggota.nama }}"></option>
+            {% endfor %}
+        </datalist>
+        <br>
+
+        <label for="nama">Nama:</label>
+        <input type="text" name="nama" id="nama" list="nama-list" required>
+        <datalist id="nama-list">
+            {% for anggota in anggota_list %}
+            <option value="{{ anggota.nama }}" data-nip="{{ anggota.nip }}"></option>
+            {% endfor %}
+        </datalist>
+        <br>
+
+        <label for="jenis">Jenis Tabungan:</label>
+        <select name="jenis" id="jenis" required>
+            <option value="">-- Pilih Jenis --</option>
+            <option value="pokok">Pokok</option>
+            <option value="wajib">Wajib</option>
+            <option value="sukarela">Sukarela</option>
+        </select>
+        <br>
+
+        <label for="jumlah">Jumlah:</label>
+        <input type="number" name="jumlah" id="jumlah" step="0.01" required>
+        <br>
+
+        <label for="tanggal">Tanggal:</label>
+        <input type="date" name="tanggal" id="tanggal" required>
+        <br><br>
+
+        <button type="submit">Simpan</button>
+    </form>
+
+    <script>
+        document.getElementById("nip").addEventListener("input", function () {
+            const selectedNip = this.value;
+            const options = document.querySelectorAll("#nip-list option");
+            options.forEach(option => {
+                if (option.value === selectedNip) {
+                    document.getElementById("nama").value = option.dataset.nama;
+                }
+            });
+        });
+
+        document.getElementById("nama").addEventListener("input", function () {
+            const selectedNama = this.value;
+            const options = document.querySelectorAll("#nama-list option");
+            options.forEach(option => {
+                if (option.value === selectedNama) {
+                    document.getElementById("nip").value = option.dataset.nip;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

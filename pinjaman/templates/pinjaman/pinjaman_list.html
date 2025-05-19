@@ -1,43 +1,54 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Daftar Pinjaman</title>
-</head>
-<body>
-  <h2>Daftar Pinjaman</h2>
-  <table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-      <tr>
-        <th>ID Anggota</th>
-        <th>Tanggal Pinjaman</th>
-        <th>Kategori</th>
-        <th>Jumlah Pinjaman</th>
-        <th>Bunga</th>
-        <th>Jumlah Bayar</th>
-        <th>Status</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for pinjaman in pinjaman_list %}
-        <tr>
-          <td>{{ pinjaman.id_anggota.nama }}</td>
-          <td>{{ pinjaman.tanggal_pinjaman }}</td>
-          <td>{{ pinjaman.kategori }}</td>
-          <td>{{ pinjaman.jumlah_pinjaman }}</td>
-          <td>{{ pinjaman.bunga }}%</td>
-          <td>{{ pinjaman.jumlah_bayar }}</td>
-          <td>{{ pinjaman.status }}</td>
-          <td>
-            <a href="{% url 'pinjaman_detail' pinjaman.id %}">Detail</a>
-            {% if pinjaman.status == 'belum' %}
-              | <a href="{% url 'bayar_pinjaman' pinjaman.id %}">Bayar</a>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</body>
-</html>
+<h2>Daftar Pinjaman</h2>
+<a href="{% url 'pinjaman:tambah' %}">+ Tambah Pinjaman</a>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Anggota</th>
+      <th>Tanggal</th>
+      <th>Jenis</th>
+      <th>Jumlah Pokok</th>
+      <th>Jasa</th>
+      <th>Total (Pokok + Jasa)</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in pinjaman_list %}
+    <tr>
+      <td>{{ p.id_anggota.nama }}</td>
+      <td>{{ p.tanggal_pinjaman|date:"j F Y" }}</td>
+
+      {% if p.jumlah_reguler > 0 %}
+        <td>Reguler</td>
+        <td>{{ p.jumlah_reguler|floatformat:0 }}</td>
+      {% elif p.jumlah_usaha > 0 %}
+        <td>Usaha</td>
+        <td>{{ p.jumlah_usaha|floatformat:0 }}</td>
+      {% elif p.jumlah_barang > 0 %}
+        <td>Barang</td>
+        <td>{{ p.jumlah_barang|floatformat:0 }}</td>
+      {% else %}
+        <td>-</td>
+        <td>0</td>
+      {% endif %}
+
+      <td>{{ p.jasa|default:"0"|floatformat:0 }}</td>
+
+      {% with total_pokok=p.jumlah_reguler|add:p.jumlah_usaha|add:p.jumlah_barang %}
+        {% with total=total_pokok|add:p.jasa %}
+          <td>{{ total|floatformat:0 }}</td>
+        {% endwith %}
+      {% endwith %}
+
+      <td>{{ p.status|title }}</td>
+
+      <td>
+        <a href="{% url 'pinjaman:detail' p.pk %}">Detail</a> |
+        <a href="{% url 'pinjaman:bayar' p.pk %}">Bayar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

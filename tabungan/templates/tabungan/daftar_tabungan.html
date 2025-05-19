@@ -5,12 +5,23 @@
     <title>Manajemen Tabungan</title>
 </head>
 <body>
+    
     <h1>Manajemen Tabungan</h1>
 
+    <p>Tambah Tabungan:</p>
+    <a href="{% url 'tabungan:tambah_tabungan' %}">Tambah Tabungan</a>
+
     <table border="1">
+        <form method="get">
+    <label for="urut">Urutkan berdasarkan:</label>
+    <select name="urut" id="urut" onchange="this.form.submit()">
+        <option value="nama" {% if request.GET.urut == "nama" %}selected{% endif %}>Nama (A-Z)</option>
+        <option value="terbaru" {% if request.GET.urut == "terbaru" %}selected{% endif %}>Waktu Tambah Tabungan</option>
+        <option value="transaksi" {% if request.GET.urut == "transaksi" %}selected{% endif %}>Transaksi Terakhir</option>
+    </select>
+</form>
         <thead>
             <tr>
-                <th>ID Tabungan</th>
                 <th>Nama Anggota</th>
                 <th>NIP</th>
                 <th>Jumlah Pokok</th>
@@ -22,7 +33,6 @@
         <tbody>
             {% for tabungan in daftar_tabungan %}
             <tr>
-                <td>{{ tabungan.id }}</td>
                 <td>{{ tabungan.id_anggota.nama }}</td>
                 <td>{{ tabungan.id_anggota.nip }}</td>
                 <td>{{ tabungan.jumlah_pokok }}</td>
