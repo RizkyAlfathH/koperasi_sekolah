@@ -7,9 +7,10 @@
       <th>Anggota</th>
       <th>Tanggal</th>
       <th>Jenis</th>
+      <th>Jumlah Cicilan</th> 
       <th>Jumlah Pokok</th>
       <th>Jasa</th>
-      <th>Total (Pokok + Jasa)</th>
+      <th>Total (Cicilan + Jasa)</th>  
       <th>Status</th>
       <th>Aksi</th>
     </tr>
@@ -19,28 +20,25 @@
     <tr>
       <td>{{ p.id_anggota.nama }}</td>
       <td>{{ p.tanggal_pinjaman|date:"j F Y" }}</td>
+      <td>
+        {% if p.jumlah_reguler > 0 %}
+          Reguler
+        {% elif p.jumlah_usaha > 0 %}
+          Usaha
+        {% elif p.jumlah_barang > 0 %}
+          Barang
+        {% else %}
+          -
+        {% endif %}
+      </td>
 
-      {% if p.jumlah_reguler > 0 %}
-        <td>Reguler</td>
-        <td>{{ p.jumlah_reguler|floatformat:0 }}</td>
-      {% elif p.jumlah_usaha > 0 %}
-        <td>Usaha</td>
-        <td>{{ p.jumlah_usaha|floatformat:0 }}</td>
-      {% elif p.jumlah_barang > 0 %}
-        <td>Barang</td>
-        <td>{{ p.jumlah_barang|floatformat:0 }}</td>
-      {% else %}
-        <td>-</td>
-        <td>0</td>
-      {% endif %}
+      <td>Rp{{ p.jumlah_cicilan|floatformat:2 }}</td>
 
-      <td>{{ p.jasa|default:"0"|floatformat:0 }}</td>
+      <td>Rp{{ p.jumlah_reguler|add:p.jumlah_usaha|add:p.jumlah_barang|floatformat:2 }}</td>
 
-      {% with total_pokok=p.jumlah_reguler|add:p.jumlah_usaha|add:p.jumlah_barang %}
-        {% with total=total_pokok|add:p.jasa %}
-          <td>{{ total|floatformat:0 }}</td>
-        {% endwith %}
-      {% endwith %}
+      <td>Rp{{ p.jasa|floatformat:2 }}</td>
+
+      <td>Rp{{ p.total|floatformat:2 }}</td>
 
       <td>{{ p.status|title }}</td>
 

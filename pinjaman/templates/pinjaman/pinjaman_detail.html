@@ -1,18 +1,19 @@
-<!-- templates/pinjaman/pinjaman_detail.html -->
 <h2>Detail Pinjaman</h2>
 <p><strong>Anggota:</strong> {{ pinjaman.id_anggota.nama }}</p>
-<p><strong>Jumlah:</strong> {{ pinjaman.jumlah_pinjaman }}</p>
-<p><strong>Bunga:</strong> {{ pinjaman.bunga }}%</p>
-<p><strong>Jumlah Bayar:</strong> {{ pinjaman.jumlah_bayar }}</p>
-<p><strong>Status:</strong> {{ pinjaman.status }}</p>
+<p><strong>Jumlah Pokok Pinjaman:</strong> Rp{{ pinjaman.jumlah_pinjaman|floatformat:2 }}</p>
+<p><strong>Jumlah Cicilan:</strong> Rp{{ pinjaman.jumlah_cicilan|floatformat:2 }}</p> 
+<p><strong>Jasa:</strong> Rp{{ pinjaman.bunga|floatformat:2 }}</p>
+<p><strong>Total Bayar (Cicilan + Jasa):</strong> Rp{{ pinjaman.jumlah_bayar|floatformat:2 }}</p>
+<p><strong>Status:</strong> {{ pinjaman.status|title }}</p>
 
 <h3>Riwayat Pembayaran</h3>
 <ul>
   {% for h in history %}
-    <li>{{ h.tanggal_bayar }} - Rp{{ h.jumlah_bayar }}</li>
+    <li>{{ h.tanggal_bayar|date:"j F Y" }} - Rp{{ h.jumlah_bayar|floatformat:2 }}</li>
   {% empty %}
     <li>Belum ada pembayaran</li>
   {% endfor %}
+  <p><strong>Sisa Pinjaman:</strong> Rp{{ pinjaman.sisa_pinjaman|floatformat:2 }}</p>
 </ul>
 
 <a href="{% url 'pinjaman:bayar' pinjaman.pk %}">Bayar Pinjaman</a> |
