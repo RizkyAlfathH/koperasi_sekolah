@@ -1,20 +1,19 @@
-<!-- templates/transaksi/form.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Form Transaksi</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
     <h1>{{ form_title }}</h1>
     <form method="post">
         {% csrf_token %}
+        <label for="id_anggota">Pilih Anggota (NIP - Nama)</label><br>
+        {{ form.anggota }}<br><br>
 
-        <label for="id_anggota">Pilih Anggota (NIP - Nama)</label>
-        {{ form.anggota }}  <!-- pastikan di forms.py ada field anggota, bukan tabungan -->
-
-        <label for="id_nama_anggota">Nama Anggota</label>
-        <input type="text" id="id_nama_anggota" class="readonly" readonly>
+        <label>Nama Anggota</label><br>
+        <input type="text" id="id_nama_anggota" readonly><br><br>
 
         <label for="{{ form.jenis.id_for_label }}">Jenis Transaksi</label>
         {{ form.jenis }}
@@ -33,22 +32,43 @@
     </form>
 
     <script>
-        $('#id_anggota').change(function(){
-            var nip = $(this).val();
-            if(nip){
-                $.ajax({
-                    url: '/get_nama_anggota/',
-                    data: {
-                        'nip': nip
-                    },
-                    success: function(data){
-                        $('#id_nama_anggota').val(data.nama);
-                    }
-                });
-            } else {
-                $('#id_nama_anggota').val('');
+    $(document).ready(function() {
+    $('#id_anggota').select2({
+        templateResult: function(data) {
+        if (!data.id) return data.text;
+        return $('<span>' + data.text + '</span>');  // opsi dropdown: "NIP - Nama"
+        },
+        templateSelection: function(data) {
+        if (!data.id) return data.text;
+        // Ambil NIP saja dari teks "NIP - Nama"
+        let nipOnly = data.text.split(' - ')[0];
+        return nipOnly;  // tampilkan hanya NIP sebagai label pilihan yang terpilih
+        }
+    });
+
+    // Fungsi untuk update nama anggota ke input readonly
+    function updateNama(id) {
+        if(id) {
+        $.ajax({
+            url: "{% url 'transaksi:get_nama_anggota' %}",
+            data: {id: id},
+            success: function(data) {
+            $('#id_nama_anggota').val(data.nama);
             }
         });
+        } else {
+        $('#id_nama_anggota').val('');
+        }
+    }
+
+    // Saat halaman load, isi nama anggota jika ada nilai terpilih
+    updateNama($('#id_anggota').val());
+
+    // Update nama saat dropdown berubah
+    $('#id_anggota').on('change', function() {
+        updateNama($(this).val());
+    });
+    });
     </script>
 </body>
 </html>

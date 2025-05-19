@@ -10,7 +10,6 @@ class TransaksiForm(forms.ModelForm):
 
     class Meta:
         model = TransaksiTabungan
-        # Sebutkan field yang dipakai, ganti 'field1', 'field2' dengan field sebenarnya di TransaksiTabungan
         fields = ['anggota', 'jenis', 'tanggal', 'jumlah', 'keterangan']
         widgets = {
             'tanggal': forms.DateInput(attrs={'type': 'date'}),
@@ -18,5 +17,4 @@ class TransaksiForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Label anggota dengan format "nip - nama"
         self.fields['anggota'].label_from_instance = lambda obj: f"{obj.nip} - {obj.nama}"
