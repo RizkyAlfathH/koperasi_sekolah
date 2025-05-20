@@ -9,29 +9,43 @@ def pinjaman_list(request):
 
     pinjaman_list = []
     for p in pinjaman_qs:
-        total_pokok = (p.jumlah_reguler or Decimal('0')) + (p.jumlah_usaha or Decimal('0')) + (p.jumlah_barang or Decimal('0'))
-        jasa = (p.jumlah_reguler or Decimal('0')) * Decimal('0.02') + (p.jumlah_usaha or Decimal('0')) * Decimal('0.02') + (p.jumlah_barang or Decimal('0')) * Decimal('0.01')
-        p.jasa = jasa
-        p.total = p.jumlah_cicilan + jasa  # total bayar = cicilan + jasa
+        total_pokok = p.jumlah_pinjaman  # total pokok pinjaman
+        bunga = p.jasa_terbaru           # bunga sesuai sisa pinjaman
+
+        # Hitung total cicilan yang sudah dibayar berdasarkan history pembayaran
+        cicilan_dibayar = HistoryPembayaran.objects.filter(id_pinjaman=p).aggregate(
+            total_cicilan=Sum('jumlah_bayar')
+        )['total_cicilan'] or Decimal('0.00')
+
+        p.jasa = bunga
+        p.total = cicilan_dibayar + bunga
+
+        # Tambahkan atribut tambahan untuk template
+        p.total_pokok = total_pokok
+        p.cicilan_dibayar = cicilan_dibayar
+
         pinjaman_list.append(p)
 
     return render(request, 'pinjaman/pinjaman_list.html', {
         'pinjaman_list': pinjaman_list,
     })
 
+
 def pinjaman_detail(request, pk):
     pinjaman = get_object_or_404(Pinjaman, pk=pk)
     history = HistoryPembayaran.objects.filter(id_pinjaman=pinjaman).order_by('-tanggal_bayar')
     return render(request, 'pinjaman/pinjaman_detail.html', {
         'pinjaman': pinjaman,
-        'history': history
+        'history': history,
     })
+
 
 def tambah_pinjaman(request):
     if request.method == 'POST':
         form = PinjamanForm(request.POST)
         if form.is_valid():
             pinjaman = form.save(commit=False)
+            # Set sisa pinjaman sama dengan total bayar (cicilan + bunga)
             pinjaman.sisa_pinjaman = pinjaman.jumlah_bayar
             pinjaman.save()
             return redirect('pinjaman:list')

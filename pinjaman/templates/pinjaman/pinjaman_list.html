@@ -6,9 +6,9 @@
     <tr>
       <th>Anggota</th>
       <th>Tanggal</th>
-      <th>Jenis</th>
-      <th>Jumlah Cicilan</th> 
+      <th>Jenis</th> 
       <th>Jumlah Pokok</th>
+      <th>Jumlah Cicilan</th>
       <th>Jasa</th>
       <th>Total (Cicilan + Jasa)</th>  
       <th>Status</th>
@@ -32,14 +32,10 @@
         {% endif %}
       </td>
 
-      <td>Rp{{ p.jumlah_cicilan|floatformat:2 }}</td>
-
-      <td>Rp{{ p.jumlah_reguler|add:p.jumlah_usaha|add:p.jumlah_barang|floatformat:2 }}</td>
-
+      <td>Rp{{ p.total_pokok|floatformat:2 }}</td>
+      <td>Rp{{ p.cicilan_dibayar|floatformat:2 }}</td>
       <td>Rp{{ p.jasa|floatformat:2 }}</td>
-
       <td>Rp{{ p.total|floatformat:2 }}</td>
-
       <td>{{ p.status|title }}</td>
 
       <td>

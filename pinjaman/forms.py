@@ -20,6 +20,14 @@ class PinjamanForm(forms.ModelForm):
         min_value=0
     )
 
+    jumlah_cicilan = forms.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        label='Jumlah Cicilan',
+        min_value=0,
+        required=True
+    )
+
     jasa = forms.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -35,6 +43,7 @@ class PinjamanForm(forms.ModelForm):
             'tanggal_pinjaman',
             'jenis_pinjaman',
             'jumlah',
+            'jumlah_cicilan',
             'jasa',
             'jatuh_tempo',
             'status'
@@ -85,18 +94,12 @@ class PinjamanForm(forms.ModelForm):
         instance.jumlah_usaha = self.cleaned_data.get('jumlah_usaha', Decimal('0'))
         instance.jumlah_barang = self.cleaned_data.get('jumlah_barang', Decimal('0'))
 
-        # Total bayar = pokok + jasa
-        instance.jumlah_bayar = (
-            instance.jumlah_reguler +
-            instance.jumlah_usaha +
-            instance.jumlah_barang +
-            self.cleaned_data.get('jasa', Decimal('0'))
-        )
+        # Ambil jumlah_cicilan dari input form user, bukan hitung ulang
+        instance.jumlah_cicilan = self.cleaned_data.get('jumlah_cicilan', Decimal('0'))
 
         if commit:
             instance.save()
         return instance
-
 
 class HistoryPembayaranForm(forms.ModelForm):
     class Meta:

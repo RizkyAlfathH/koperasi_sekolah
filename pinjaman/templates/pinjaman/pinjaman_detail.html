@@ -2,7 +2,7 @@
 <p><strong>Anggota:</strong> {{ pinjaman.id_anggota.nama }}</p>
 <p><strong>Jumlah Pokok Pinjaman:</strong> Rp{{ pinjaman.jumlah_pinjaman|floatformat:2 }}</p>
 <p><strong>Jumlah Cicilan:</strong> Rp{{ pinjaman.jumlah_cicilan|floatformat:2 }}</p> 
-<p><strong>Jasa:</strong> Rp{{ pinjaman.bunga|floatformat:2 }}</p>
+<p><strong>Jasa:</strong> Rp{{ pinjaman.jasa_terbaru|floatformat:2 }}</p>
 <p><strong>Total Bayar (Cicilan + Jasa):</strong> Rp{{ pinjaman.jumlah_bayar|floatformat:2 }}</p>
 <p><strong>Status:</strong> {{ pinjaman.status|title }}</p>
 
