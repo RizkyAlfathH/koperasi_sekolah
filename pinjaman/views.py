@@ -6,21 +6,18 @@ from django.db.models import Sum
 
 def pinjaman_list(request):
     pinjaman_qs = Pinjaman.objects.all()
-
     pinjaman_list = []
     for p in pinjaman_qs:
-        total_pokok = p.jumlah_pinjaman  # total pokok pinjaman
-        bunga = p.jasa_terbaru           # bunga sesuai sisa pinjaman
+        total_pokok = p.jumlah_pinjaman
+        bunga = p.bunga
 
-        # Hitung total cicilan yang sudah dibayar berdasarkan history pembayaran
         cicilan_dibayar = HistoryPembayaran.objects.filter(id_pinjaman=p).aggregate(
             total_cicilan=Sum('jumlah_bayar')
         )['total_cicilan'] or Decimal('0.00')
 
         p.jasa = bunga
-        p.total = cicilan_dibayar + bunga
+        p.total = p.jumlah_cicilan + bunga
 
-        # Tambahkan atribut tambahan untuk template
         p.total_pokok = total_pokok
         p.cicilan_dibayar = cicilan_dibayar
 

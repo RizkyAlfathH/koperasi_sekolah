@@ -1,5 +1,5 @@
 from django import forms
-from decimal import Decimal 
+from decimal import Decimal
 from .models import Pinjaman, HistoryPembayaran
 
 class PinjamanForm(forms.ModelForm):
@@ -19,7 +19,6 @@ class PinjamanForm(forms.ModelForm):
         label='Jumlah Pinjaman',
         min_value=0
     )
-
     jumlah_cicilan = forms.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -27,7 +26,6 @@ class PinjamanForm(forms.ModelForm):
         min_value=0,
         required=True
     )
-
     jasa = forms.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -66,8 +64,6 @@ class PinjamanForm(forms.ModelForm):
         cleaned_data = super().clean()
         jenis = cleaned_data.get('jenis_pinjaman')
         jumlah = cleaned_data.get('jumlah') or Decimal('0')
-
-        # Reset semua kategori
         cleaned_data['jumlah_reguler'] = Decimal('0')
         cleaned_data['jumlah_usaha'] = Decimal('0')
         cleaned_data['jumlah_barang'] = Decimal('0')
@@ -75,28 +71,24 @@ class PinjamanForm(forms.ModelForm):
         jasa = Decimal('0')
         if jenis == 'reguler':
             cleaned_data['jumlah_reguler'] = jumlah
-            jasa = jumlah * Decimal('0.02')  # 2%
+            jasa = jumlah * Decimal('0.02')
         elif jenis == 'usaha':
             cleaned_data['jumlah_usaha'] = jumlah
-            jasa = jumlah * Decimal('0.02')  # 2%
+            jasa = jumlah * Decimal('0.02')
         elif jenis == 'barang':
             cleaned_data['jumlah_barang'] = jumlah
-            jasa = jumlah * Decimal('0.01')  # 1%
+            jasa = jumlah * Decimal('0.01')
 
-        cleaned_data['jasa'] = jasa.quantize(Decimal('0.01'))  # Pembulatan 2 desimal
-
+        cleaned_data['jasa'] = jasa.quantize(Decimal('0.01'))
         return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-
         instance.jumlah_reguler = self.cleaned_data.get('jumlah_reguler', Decimal('0'))
         instance.jumlah_usaha = self.cleaned_data.get('jumlah_usaha', Decimal('0'))
         instance.jumlah_barang = self.cleaned_data.get('jumlah_barang', Decimal('0'))
-
-        # Ambil jumlah_cicilan dari input form user, bukan hitung ulang
+        # Jumlah cicilan dari input user, **JANGAN** diubah ke jumlah_pinjaman!
         instance.jumlah_cicilan = self.cleaned_data.get('jumlah_cicilan', Decimal('0'))
-
         if commit:
             instance.save()
         return instance

@@ -10,11 +10,9 @@ class Pinjaman(models.Model):
     jumlah_reguler = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     jumlah_usaha = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     jumlah_barang = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
-
     jumlah_cicilan = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     jatuh_tempo = models.DateField()
     status = models.CharField(max_length=10, default='belum')
-
     sisa_pinjaman = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
 
     @property
@@ -23,6 +21,7 @@ class Pinjaman(models.Model):
 
     @property
     def bunga(self):
+        # Bunga awal (berdasarkan jenis pinjaman dan pokok)
         jasa_reguler = (self.jumlah_reguler or Decimal('0')) * Decimal('0.02')
         jasa_usaha = (self.jumlah_usaha or Decimal('0')) * Decimal('0.02')
         jasa_barang = (self.jumlah_barang or Decimal('0')) * Decimal('0.01')
@@ -30,49 +29,47 @@ class Pinjaman(models.Model):
 
     @property
     def jumlah_bayar(self):
-        # total bayar = cicilan + bunga
-        return self.jumlah_cicilan + self.bunga
-
-    def save(self, *args, **kwargs):
-        # Set jumlah_cicilan saat save: total pokok pinjaman (jika belum diisi)
-        if not self.jumlah_cicilan or self.jumlah_cicilan == 0:
-            self.jumlah_cicilan = self.jumlah_pinjaman
-
-        # Saat pertama kali dibuat, set sisa pinjaman total bayar
-        if not self.pk:
-            self.sisa_pinjaman = self.jumlah_bayar
-        super().save(*args, **kwargs)
+        # Total awal yang harus dibayar: cicilan + bunga (awalnya)
+        return (self.jumlah_cicilan or Decimal('0')) + (self.bunga or Decimal('0'))
 
     @property
     def jasa_terbaru(self):
-        # Hitung bunga berdasarkan sisa pinjaman yang ada sekarang
-        total_sisa = self.sisa_pinjaman or Decimal('0')
+        # Jasa berdasarkan sisa pokok pinjaman terkini
+        sisa_pokok = self.sisa_pinjaman or Decimal('0')
+        total_pokok = self.jumlah_pinjaman
+        if total_pokok == 0 or sisa_pokok == 0:
+            return Decimal('0.00')
+        prop_reguler = (self.jumlah_reguler or Decimal('0')) / total_pokok
+        prop_usaha = (self.jumlah_usaha or Decimal('0')) / total_pokok
+        prop_barang = (self.jumlah_barang or Decimal('0')) / total_pokok
+        bunga_reguler = sisa_pokok * prop_reguler * Decimal('0.02')
+        bunga_usaha = sisa_pokok * prop_usaha * Decimal('0.02')
+        bunga_barang = sisa_pokok * prop_barang * Decimal('0.01')
+        total_bunga = bunga_reguler + bunga_usaha + bunga_barang
+        return total_bunga.quantize(Decimal('0.01'))
 
-        # Tentukan proporsi bunga sesuai jenis pinjaman
-        # Hitung proporsi pokok masing-masing jenis
+    def save(self, *args, **kwargs):
+        # Set jumlah_cicilan ke input user, default ke jumlah_pinjaman jika belum diisi
+        if not self.jumlah_cicilan or self.jumlah_cicilan == 0:
+            self.jumlah_cicilan = self.jumlah_pinjaman
+        if not self.pk:
+            self.sisa_pinjaman = self.jumlah_pinjaman  # sisa pokok awal
+        super().save(*args, **kwargs)
+
+    def get_jasa_from_sisa(self, sisa_pokok):
         total_pokok = self.jumlah_pinjaman
         if total_pokok == 0:
             return Decimal('0.00')
-
         prop_reguler = (self.jumlah_reguler or Decimal('0')) / total_pokok
         prop_usaha = (self.jumlah_usaha or Decimal('0')) / total_pokok
         prop_barang = (self.jumlah_barang or Decimal('0')) / total_pokok
 
-        # Bunga per jenis dihitung dari sisa * proporsi * rate bunga
-        bunga_reguler = total_sisa * prop_reguler * Decimal('0.02')
-        bunga_usaha = total_sisa * prop_usaha * Decimal('0.02')
-        bunga_barang = total_sisa * prop_barang * Decimal('0.01')
+        bunga_reguler = sisa_pokok * prop_reguler * Decimal('0.02')
+        bunga_usaha = sisa_pokok * prop_usaha * Decimal('0.02')
+        bunga_barang = sisa_pokok * prop_barang * Decimal('0.01')
 
-        total_bunga = bunga_reguler + bunga_usaha + bunga_barang
+        return (bunga_reguler + bunga_usaha + bunga_barang).quantize(Decimal('0.01'))
 
-        return total_bunga.quantize(Decimal('0.01'))  # Bulatkan 2 desimal
-
-    def save(self, *args, **kwargs):
-        # Pastikan jumlah_cicilan adalah total pokok pinjaman
-        self.jumlah_cicilan = self.jumlah_pinjaman
-        if not self.pk:
-            self.sisa_pinjaman = self.jumlah_bayar
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Pinjaman {self.id_anggota} - Sisa: {self.sisa_pinjaman:.2f}"
