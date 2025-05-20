@@ -4,6 +4,9 @@ from anggota.models import Anggota
 from .models import Tabungan, HistoryTabungan
 from django.utils.dateparse import parse_date
 from django.db.models import Max
+from django.http import JsonResponse
+from .forms import PenarikanForm
+from django.utils import timezone
 
 def daftar_tabungan(request):
     daftar_tabungan = Tabungan.objects.select_related('id_anggota').all()
@@ -88,4 +91,83 @@ def tambah_tabungan(request):
         return redirect('tabungan:daftar_tabungan')
 
     return render(request, 'tabungan/form_tabungan.html', {'anggota_list': anggota_list})
+
+def form_penarikan_view(request):
+    form = PenarikanForm()
+    return render(request, 'tabungan/form_penarikan.html', {'form': form})
+
+
+def get_data_by_nip(request):
+    nip = request.GET.get('nip')
+    try:
+        anggota = Anggota.objects.get(nip=nip)
+        tabungan = Tabungan.objects.get(id_anggota=anggota)
+        return JsonResponse({
+            'nama': anggota.nama,
+            'pokok': float(tabungan.jumlah_pokok),
+            'wajib': float(tabungan.jumlah_wajib),
+            'sukarela': float(tabungan.jumlah_sukarela)
+        })
+    except Anggota.DoesNotExist:
+        return JsonResponse({'error': 'Anggota tidak ditemukan'}, status=404)
+    except Tabungan.DoesNotExist:
+        return JsonResponse({'error': 'Tabungan tidak ditemukan'}, status=404)
+    
+def get_data_by_nama(request):
+    nama = request.GET.get('nama')
+    try:
+        anggota = Anggota.objects.get(nama__iexact=nama)
+        tabungan = Tabungan.objects.get(id_anggota=anggota)
+        return JsonResponse({
+            'nip': anggota.nip,
+            'pokok': float(tabungan.jumlah_pokok),
+            'wajib': float(tabungan.jumlah_wajib),
+            'sukarela': float(tabungan.jumlah_sukarela)
+        })
+    except Anggota.DoesNotExist:
+        return JsonResponse({'error': 'Anggota tidak ditemukan'}, status=404)
+    except Tabungan.DoesNotExist:
+        return JsonResponse({'error': 'Tabungan tidak ditemukan'}, status=404)
+    
+def form_penarikan_view(request):
+    if request.method == 'POST':
+        form = PenarikanForm(request.POST)
+        if form.is_valid():
+            nip = form.cleaned_data['nip']
+            jumlah = form.cleaned_data['jumlah']
+
+            try:
+                anggota = Anggota.objects.get(nip=nip)
+                tabungan = Tabungan.objects.get(id_anggota=anggota)
+
+                if jumlah > tabungan.jumlah_sukarela:
+                    form.add_error('jumlah', 'Saldo sukarela tidak mencukupi.')
+                else:
+                    # Update saldo
+                    tabungan.jumlah_sukarela -= jumlah
+                    tabungan.save()
+
+                    # Simpan ke HistoryTabungan
+                    HistoryTabungan.objects.create(
+                        id_tabungan=tabungan,
+                        tanggal=timezone.now().date(),
+                        jenis='penarikan',
+                        jumlah=jumlah
+                    )
+
+                    return redirect('tabungan:daftar_tabungan')
+
+            except Anggota.DoesNotExist:
+                form.add_error('nip', 'Anggota tidak ditemukan.')
+            except Tabungan.DoesNotExist:
+                form.add_error(None, 'Data tabungan tidak ditemukan.')
+
+    else:
+        form = PenarikanForm()
+
+    anggota_list = Anggota.objects.all()
+    return render(request, 'tabungan/form_penarikan.html', {
+        'form': form,
+        'anggota_list': anggota_list
+    })
 

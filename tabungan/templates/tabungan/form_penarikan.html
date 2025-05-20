@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Form Penarikan Tabungan</title>
+</head>
+<body>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Tarik</button>
+</form>
+
+<script>
+document.getElementById("nip-field").addEventListener("change", function () {
+    const nip = this.value;
+    fetch(`/tabungan/ajax/get-nip/?nip=${nip}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.error) {
+                document.getElementById("nama-field").value = data.nama;
+                document.getElementById("jumlah-pokok").value = data.pokok;
+                document.getElementById("jumlah-wajib").value = data.wajib;
+                document.getElementById("jumlah-sukarela").value = data.sukarela;
+            } else {
+                alert(data.error);
+            }
+        });
+});
+
+document.getElementById("nama-field").addEventListener("change", function () {
+    const nama = this.value;
+    fetch(`/tabungan/ajax/get-nama/?nama=${encodeURIComponent(nama)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.error) {
+                document.getElementById("nip-field").value = data.nip;
+                document.getElementById("jumlah-pokok").value = data.pokok;
+                document.getElementById("jumlah-wajib").value = data.wajib;
+                document.getElementById("jumlah-sukarela").value = data.sukarela;
+            } else {
+                alert(data.error);
+            }
+        });
+});
+</script>
+
+</body>
+</html>
