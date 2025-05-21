@@ -34,7 +34,6 @@ class Pinjaman(models.Model):
 
     @property
     def jasa_terbaru(self):
-        # Jasa berdasarkan sisa pokok pinjaman terkini
         sisa_pokok = self.sisa_pinjaman or Decimal('0')
         total_pokok = self.jumlah_pinjaman
         if total_pokok == 0 or sisa_pokok == 0:
@@ -47,6 +46,16 @@ class Pinjaman(models.Model):
         bunga_barang = sisa_pokok * prop_barang * Decimal('0.01')
         total_bunga = bunga_reguler + bunga_usaha + bunga_barang
         return total_bunga.quantize(Decimal('0.01'))
+
+    def save(self, *args, **kwargs):
+        if not self.jumlah_cicilan or self.jumlah_cicilan == 0:
+            self.jumlah_cicilan = self.jumlah_pinjaman
+        if not self.pk:
+            self.sisa_pinjaman = self.jumlah_pinjaman  # set sisa pokok awal, bukan jumlah_bayar
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Pinjaman {self.id_anggota} - Sisa: {self.sisa_pinjaman:.2f}"
 
     def save(self, *args, **kwargs):
         # Set jumlah_cicilan ke input user, default ke jumlah_pinjaman jika belum diisi
