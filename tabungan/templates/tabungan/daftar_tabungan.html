@@ -15,15 +15,23 @@
 
     <br><br>
 
-    <table border="1">
-        <form method="get">
-    <label for="urut">Urutkan berdasarkan:</label>
-    <select name="urut" id="urut" onchange="this.form.submit()">
-        <option value="nama" {% if request.GET.urut == "nama" %}selected{% endif %}>Nama (A-Z)</option>
-        <option value="terbaru" {% if request.GET.urut == "terbaru" %}selected{% endif %}>Waktu Tambah Tabungan</option>
-        <option value="transaksi" {% if request.GET.urut == "transaksi" %}selected{% endif %}>Transaksi Terakhir</option>
-    </select>
-</form>
+    <!-- Input pencarian -->
+    <label for="pencarian">Cari Nama Anggota:</label><br>
+    <input type="text" id="pencarian" onkeyup="filterTabel()" placeholder="Ketik nama anggota...">
+
+    <br><br>
+
+    <!-- Form urutan -->
+    <form method="get">
+        <label for="urut">Urutkan berdasarkan:</label>
+        <select name="urut" id="urut" onchange="this.form.submit()">
+            <option value="nama" {% if request.GET.urut == "nama" %}selected{% endif %}>Nama (A-Z)</option>
+            <option value="terbaru" {% if request.GET.urut == "terbaru" %}selected{% endif %}>Waktu Tambah Tabungan</option>
+        </select>
+    </form>
+
+    <!-- Tabel tabungan -->
+    <table id="tabel-tabungan" border="1">
         <thead>
             <tr>
                 <th>Nama Anggota</th>
@@ -43,12 +51,32 @@
                 <td>{{ tabungan.jumlah_wajib }}</td>
                 <td>{{ tabungan.jumlah_sukarela }}</td>
                 <td>
+                    <a href="{% url 'tabungan:detail_tabungan' tabungan.id %}">Detail</a> |
                     <a href="{% url 'tabungan:edit_tabungan' tabungan.id %}">Edit</a> |
-                    <a href="{% url 'tabungan:hapus_tabungan' tabungan.id %}">Hapus</a>
+                    <a href="{% url 'tabungan:hapus_tabungan' tabungan.id %}" onclick="return confirm('Yakin ingin menghapus data tabungan ini?');">Hapus</a>
                 </td>
+
             </tr>
             {% endfor %}
         </tbody>
     </table>
+        <script>
+        function filterTabel() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("pencarian");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("tabel-tabungan");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 1; i < tr.length; i++) { // mulai dari 1, lewati header
+                td = tr[i].getElementsByTagName("td")[0]; // kolom Nama Anggota
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    tr[i].style.display = txtValue.toLowerCase().includes(filter) ? "" : "none";
+                }
+            }
+        }
+    </script>
+
 </body>
 </html>

@@ -17,4 +17,6 @@ urlpatterns = [
     path('tambah-anggota/', views.tambah_anggota, name='tambah_anggota'),
     path('edit-anggota/<int:id_anggota>/', views.edit_anggota, name='edit_anggota'),
     path('hapus-anggota/<int:id_anggota>/', views.hapus_anggota, name='hapus_anggota'),
+    path('anggota/<int:id_anggota>/', views.detail_anggota, name='detail_anggota'),
+
 ]

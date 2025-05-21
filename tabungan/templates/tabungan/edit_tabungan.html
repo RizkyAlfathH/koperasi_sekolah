@@ -11,13 +11,6 @@
         <label>Nama Anggota:</label>
         <input type="text" value="{{ tabungan.id_anggota.nama }}" disabled><br><br>
 
-        <label>Jenis Tabungan:</label>
-        <select name="jenis">
-            <option value="pokok" {% if tabungan.jenis == "pokok" %}selected{% endif %}>Pokok</option>
-            <option value="wajib" {% if tabungan.jenis == "wajib" %}selected{% endif %}>Wajib</option>
-            <option value="sukarela" {% if tabungan.jenis == "sukarela" %}selected{% endif %}>Sukarela</option>
-        </select><br><br>
-
         <label>Jumlah Pokok:</label>
         <input type="number" name="jumlah_pokok" value="{{ tabungan.jumlah_pokok }}"><br><br>
 

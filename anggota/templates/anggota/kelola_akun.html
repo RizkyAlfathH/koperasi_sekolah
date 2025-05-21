@@ -57,6 +57,7 @@
             <td>{{ anggota.status }}</td>
             <td>{{ anggota.alasan_tidak_aktif }}</td>
             <td>
+                <a href="{% url 'detail_anggota' anggota.id_anggota %}">Detail</a> |
                 <a href="{% url 'edit_anggota' anggota.id_anggota %}">Edit</a> |
                 <a href="{% url 'hapus_anggota' anggota.id_anggota %}" onclick="return confirm('Yakin ingin menghapus anggota ini?');">Hapus</a>
             </td>

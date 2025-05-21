@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Tabungan</title>
+</head>
+<body>
+    <h1>Detail Tabungan</h1>
+
+    <table border="1">
+        <tr><th>Nama</th><td>{{ tabungan.id_anggota.nama }}</td></tr>
+        <tr><th>NIP</th><td>{{ tabungan.id_anggota.nip }}</td></tr>
+        <tr><th>Jumlah Pokok</th><td>{{ tabungan.jumlah_pokok }}</td></tr>
+        <tr><th>Jumlah Wajib</th><td>{{ tabungan.jumlah_wajib }}</td></tr>
+        <tr><th>Jumlah Sukarela</th><td>{{ tabungan.jumlah_sukarela }}</td></tr>
+        <tr><th>Tanggal Input</th><td>{{ tabungan.tanggal }}</td></tr>
+        <tr><th>Petugas Input</th><td>{{ tabungan.petugas }}</td></tr>
+    </table>
+
+    <br>
+
+    <h2>Histori Transaksi</h2>
+{% if histori %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>Jenis Transaksi</th>
+            <th>Jumlah</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaksi in histori %}
+        <tr>
+            <td>{{ transaksi.tanggal }}</td>
+            <td>{{ transaksi.jenis }}</td>
+            <td>{{ transaksi.jumlah }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Tidak ada histori transaksi.</p>
+{% endif %}
+
+    <br>
+    <a href="{% url 'tabungan:daftar_tabungan' %}">← Kembali ke Daftar Tabungan</a>
+</body>
+</html>

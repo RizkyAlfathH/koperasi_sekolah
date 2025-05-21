@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Anggota</title>
+</head>
+<body>
+    <h1>Detail Anggota</h1>
+    <table border="1">
+        <tr><th>ID</th><td>{{ anggota.id_anggota }}</td></tr>
+        <tr><th>NIP</th><td>{{ anggota.nip }}</td></tr>
+        <tr><th>Nama</th><td>{{ anggota.nama }}</td></tr>
+        <tr><th>Alamat</th><td>{{ anggota.alamat }}</td></tr>
+        <tr><th>No Telepon</th><td>{{ anggota.no_tlp }}</td></tr>
+        <tr><th>Email</th><td>{{ anggota.email }}</td></tr>
+        <tr><th>Jenis Kelamin</th><td>{{ anggota.jenis_kelamin }}</td></tr>
+        <tr><th>Tanggal Daftar</th><td>{{ anggota.tgl_daftar }}</td></tr>
+        <tr><th>Status</th><td>{{ anggota.status }}</td></tr>
+        <tr><th>Alasan Tidak Aktif</th><td>{{ anggota.alasan_tidak_aktif }}</td></tr>
+    </table>
+
+    <br>
+    <a href="{% url 'kelola_akun' %}">← Kembali ke Daftar Anggota</a>
+</body>
+</html>

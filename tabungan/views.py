@@ -171,3 +171,16 @@ def form_penarikan_view(request):
         'anggota_list': anggota_list
     })
 
+def detail_tabungan(request, id):
+    tabungan = get_object_or_404(Tabungan, id=id)
+    return render(request, 'tabungan/detail_tabungan.html', {'tabungan': tabungan})
+
+def detail_tabungan(request, id):
+    tabungan = get_object_or_404(Tabungan, id=id)
+    histori = HistoryTabungan.objects.filter(tabungan=tabungan).order_by('-tanggal')
+
+    context = {
+        'tabungan': tabungan,
+        'histori': histori,
+    }
+    return render(request, 'tabungan/detail_tabungan.html', context)

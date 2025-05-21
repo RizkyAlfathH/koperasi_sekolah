@@ -66,3 +66,8 @@ def hapus_anggota(request, id_anggota):
     anggota = get_object_or_404(Anggota, id_anggota=id_anggota)
     anggota.delete()
     return redirect('kelola_akun')
+
+
+def detail_anggota(request, id_anggota):
+    anggota = get_object_or_404(Anggota, id_anggota=id_anggota)
+    return render(request, 'anggota/detail_anggota.html', {'anggota': anggota})

@@ -12,6 +12,7 @@ urlpatterns = [
     path('form-penarikan/', views.form_penarikan_view, name='form_penarikan'),
     path('ajax/get-nip/', views.get_data_by_nip, name='get_data_by_nip'),
     path('ajax/get-nama/', views.get_data_by_nama, name='get_data_by_nama'),
+    path('detail/<int:id>/', views.detail_tabungan, name='detail_tabungan'),
 
     # path('history/<int:tabungan_id>/', views.history_tabungan, name='history_tabungan'),
 ]
