@@ -29,7 +29,7 @@ def login_view(request):
                 if user.role == 'ketua':
                     return redirect('dashboard_ketua')
                 elif user.role == 'sekretaris':
-                    return redirect('dashboard_sekretaris')
+                    return redirect('dashboard_sekertaris')
                 elif user.role == 'bendahara':
                     return redirect('dashboard_bendahara')
                 else:

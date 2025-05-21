@@ -5,9 +5,26 @@
     <title>Dashboard Sekretaris</title>
 </head>
 <body>
-    <h1>Selamat datang, Sekretaris!</h1>
-    <ul>
-        <li><a href="/anggota/">Kelola Data Anggota</a></li>
-    </ul>
+    <header>
+        <h1>Dashboard Sekretaris</h1>
+    </header>
+
+    <div style="display: flex;">
+        <!-- Sidebar -->
+        <nav>
+            <ul>
+                <li><a href="/anggota/">Lihat Data Anggota</a></li>
+                {% comment %} <li><a href="/anggota/tambah/">Tambah Anggota</a></li>
+                <li><a href="/anggota/edit/">Edit Anggota</a></li>
+                <li><a href="/anggota/hapus/">Hapus Anggota</a></li> {% endcomment %}
+            </ul>
+        </nav>
+
+        <!-- Konten utama -->
+        <main>
+            <h2>Selamat datang, Sekretaris!</h2>
+            <p>Silakan pilih menu dari sidebar untuk mengelola data anggota.</p>
+        </main>
+    </div>
 </body>
 </html>
