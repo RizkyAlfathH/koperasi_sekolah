@@ -21,11 +21,11 @@ class Pinjaman(models.Model):
 
     @property
     def bunga(self):
-        # Bunga awal (berdasarkan jenis pinjaman dan pokok)
         jasa_reguler = (self.jumlah_reguler or Decimal('0')) * Decimal('0.02')
-        jasa_usaha = (self.jumlah_usaha or Decimal('0')) * Decimal('0.02')
-        jasa_barang = (self.jumlah_barang or Decimal('0')) * Decimal('0.01')
-        return jasa_reguler + jasa_usaha + jasa_barang
+        jasa_khusus = (self.jumlah_usaha or Decimal('0')) * Decimal('0.015')
+        jasa_barang = (self.jumlah_barang or Decimal('0')) * Decimal('0.02')
+        
+        return jasa_reguler + jasa_khusus + jasa_barang
 
     @property
     def jumlah_bayar(self):
@@ -39,13 +39,11 @@ class Pinjaman(models.Model):
         if total_pokok == 0 or sisa_pokok == 0:
             return Decimal('0.00')
         prop_reguler = (self.jumlah_reguler or Decimal('0')) / total_pokok
-        prop_usaha = (self.jumlah_usaha or Decimal('0')) / total_pokok
-        prop_barang = (self.jumlah_barang or Decimal('0')) / total_pokok
         bunga_reguler = sisa_pokok * prop_reguler * Decimal('0.02')
-        bunga_usaha = sisa_pokok * prop_usaha * Decimal('0.02')
-        bunga_barang = sisa_pokok * prop_barang * Decimal('0.01')
-        total_bunga = bunga_reguler + bunga_usaha + bunga_barang
-        return total_bunga.quantize(Decimal('0.01'))
+        bunga_khusus = (self.jumlah_usaha or Decimal('0')) * Decimal('0.015')
+        bunga_barang = (self.jumlah_barang or Decimal('0')) * Decimal('0.02')
+        total_bunga = bunga_reguler + bunga_khusus + bunga_barang
+        return total_bunga.quantize(Decimal('0.01'))  
 
     def save(self, *args, **kwargs):
         if not self.jumlah_cicilan or self.jumlah_cicilan == 0:
@@ -74,8 +72,8 @@ class Pinjaman(models.Model):
         prop_barang = (self.jumlah_barang or Decimal('0')) / total_pokok
 
         bunga_reguler = sisa_pokok * prop_reguler * Decimal('0.02')
-        bunga_usaha = sisa_pokok * prop_usaha * Decimal('0.02')
-        bunga_barang = sisa_pokok * prop_barang * Decimal('0.01')
+        bunga_usaha = sisa_pokok * prop_usaha * Decimal('0.015')
+        bunga_barang = sisa_pokok * prop_barang * Decimal('0.02')
 
         return (bunga_reguler + bunga_usaha + bunga_barang).quantize(Decimal('0.01'))
 

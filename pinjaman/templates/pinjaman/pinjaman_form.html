@@ -72,12 +72,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (jenis === "reguler") {
             bunga = 0.02;
             label = "Jasa Reguler (2%)";
-        } else if (jenis === "usaha") {
-            bunga = 0.02;
-            label = "Jasa Usaha (2%)";
+        } else if (jenis === "khusus") {
+            bunga = 0.015;
+            label = "Jasa Khusus (1.5%)";
         } else if (jenis === "barang") {
-            bunga = 0.01;
-            label = "Jasa Barang (1%)";
+            bunga = 0.02;
+            label = "Jasa Barang (2%)";
         }
 
         const jasa = jumlah * bunga;
