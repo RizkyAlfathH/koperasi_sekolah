@@ -96,12 +96,11 @@ class PinjamanForm(forms.ModelForm):
 class HistoryPembayaranForm(forms.ModelForm):
     class Meta:
         model = HistoryPembayaran
-        fields = ['id_pinjaman', 'tanggal_bayar', 'jumlah_bayar']
+        fields = ['tanggal_bayar', 'jumlah_bayar']
         widgets = {
             'tanggal_bayar': forms.DateInput(attrs={'type': 'date'}),
         }
         labels = {
-            'id_pinjaman': 'Pinjaman',
             'tanggal_bayar': 'Tanggal Pembayaran',
             'jumlah_bayar': 'Jumlah Dibayar',
         }
