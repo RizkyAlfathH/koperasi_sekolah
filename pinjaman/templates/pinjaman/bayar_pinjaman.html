@@ -1,7 +1,12 @@
-<h2>Bayar Pinjaman: {{ pinjaman }}</h2>
+<h2>Bayar Pinjaman</h2>
+
+<p><strong>Nama Anggota:</strong> {{ pinjaman.id_anggota }}</p>
+<p><strong>Sisa Pinjaman:</strong> Rp{{ pinjaman.sisa_pinjaman|floatformat:2 }}</p>
+
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Bayar</button>
 </form>
+
 <a href="{% url 'pinjaman:detail' pk=pinjaman.pk %}">Kembali</a>

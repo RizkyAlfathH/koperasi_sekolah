@@ -76,34 +76,8 @@ def bayar_pinjaman(request, pk):
     if sisa_bayar < 0:
         sisa_bayar = Decimal('0')
 
-    if request.method == 'POST':
-        form = HistoryPembayaranForm(request.POST)
-        if form.is_valid():
-            pembayaran = form.save(commit=False)
-            pembayaran.id_pinjaman = pinjaman
-            pembayaran.save()
-            return redirect('pinjaman:detail', pk=pk)
-    else:
-        form = HistoryPembayaranForm(initial={
-            'id_pinjaman': pinjaman,
-            'jumlah_bayar': sisa_bayar.quantize(Decimal('0.01')),
-        })
-
-    return render(request, 'pinjaman/bayar_pinjaman.html', {
-        'form': form,
-        'pinjaman': pinjaman,
-    })
-
-def bayar_pinjaman(request, pk):
-    pinjaman = get_object_or_404(Pinjaman, pk=pk)
-
-    total_sudah_bayar = HistoryPembayaran.objects.filter(id_pinjaman=pinjaman).aggregate(
-        total=Sum('jumlah_bayar')
-    )['total'] or Decimal('0')
-
     jumlah_cicilan = pinjaman.jumlah_cicilan or Decimal('0')
-
-    jumlah_bayar_default = jumlah_cicilan.quantize(Decimal('0.01'))
+    jumlah_bayar_default = sisa_bayar if sisa_bayar > 0 else jumlah_cicilan.quantize(Decimal('0.01'))
 
     if request.method == 'POST':
         form = HistoryPembayaranForm(request.POST)
@@ -122,4 +96,3 @@ def bayar_pinjaman(request, pk):
         'form': form,
         'pinjaman': pinjaman,
     })
-

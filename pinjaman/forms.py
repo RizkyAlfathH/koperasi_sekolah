@@ -5,7 +5,7 @@ from .models import Pinjaman, HistoryPembayaran
 class PinjamanForm(forms.ModelForm):
     JENIS_CHOICES = [
         ('reguler', 'Reguler'),
-        ('usaha', 'Usaha'),
+        ('khusus', 'Khusus'),
         ('barang', 'Barang'),
     ]
 
@@ -72,12 +72,12 @@ class PinjamanForm(forms.ModelForm):
         if jenis == 'reguler':
             cleaned_data['jumlah_reguler'] = jumlah
             jasa = jumlah * Decimal('0.02')
-        elif jenis == 'usaha':
+        elif jenis == 'khusus':
             cleaned_data['jumlah_usaha'] = jumlah
-            jasa = jumlah * Decimal('0.02')
+            jasa = jumlah * Decimal('0.015')
         elif jenis == 'barang':
             cleaned_data['jumlah_barang'] = jumlah
-            jasa = jumlah * Decimal('0.01')
+            jasa = jumlah * Decimal('0.02') 
 
         cleaned_data['jasa'] = jasa.quantize(Decimal('0.01'))
         return cleaned_data
@@ -96,12 +96,11 @@ class PinjamanForm(forms.ModelForm):
 class HistoryPembayaranForm(forms.ModelForm):
     class Meta:
         model = HistoryPembayaran
-        fields = ['id_pinjaman', 'tanggal_bayar', 'jumlah_bayar']
+        fields = ['tanggal_bayar', 'jumlah_bayar']
         widgets = {
             'tanggal_bayar': forms.DateInput(attrs={'type': 'date'}),
         }
         labels = {
-            'id_pinjaman': 'Pinjaman',
             'tanggal_bayar': 'Tanggal Pembayaran',
             'jumlah_bayar': 'Jumlah Dibayar',
         }
