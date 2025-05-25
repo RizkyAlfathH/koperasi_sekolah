@@ -12,7 +12,7 @@ class Pinjaman(models.Model):
     jumlah_barang = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     jumlah_cicilan = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     jatuh_tempo = models.DateField()
-    status = models.CharField(max_length=10, default='belum')
+    status = models.CharField(max_length=15, default='belum lunas')
     sisa_pinjaman = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
 
     @property

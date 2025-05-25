@@ -56,13 +56,16 @@ def tambah_pinjaman(request):
     if request.method == 'POST':
         form = PinjamanForm(request.POST)
         if form.is_valid():
-            pinjaman = form.save(commit=False)
-            pinjaman.sisa_pinjaman = pinjaman.jumlah_cicilan
-            pinjaman.save()
+            form.save()  # Gunakan save() dari form yang sudah mengatur semua logika
             return redirect('pinjaman:list')
+        else:
+            print("Form invalid:", form.errors)  # Debugging error
     else:
         form = PinjamanForm()
-    return render(request, 'pinjaman/pinjaman_form.html', {'form': form})
+
+    return render(request, 'pinjaman/pinjaman_form.html', {
+        'form': form
+    })
 
 
 def bayar_pinjaman(request, pk):
@@ -85,10 +88,20 @@ def bayar_pinjaman(request, pk):
             pembayaran = form.save(commit=False)
             pembayaran.id_pinjaman = pinjaman
             pembayaran.save()
+
+            # Cek dan update status pinjaman jika sudah lunas
+            total_bayar = HistoryPembayaran.objects.filter(id_pinjaman=pinjaman).aggregate(
+                total=Sum('jumlah_bayar')
+            )['total'] or Decimal('0')
+
+            if total_bayar >= pinjaman.jumlah_cicilan:
+                pinjaman.status = 'lunas'
+                pinjaman.sisa_pinjaman = Decimal('0')
+                pinjaman.save()
+
             return redirect('pinjaman:detail', pk=pk)
     else:
         form = HistoryPembayaranForm(initial={
-            'id_pinjaman': pinjaman,
             'jumlah_bayar': jumlah_bayar_default,
         })
 
