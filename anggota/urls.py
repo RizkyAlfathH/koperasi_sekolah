@@ -10,13 +10,12 @@ urlpatterns = [
 
     # --- Admin ---
     path('tambah-admin/', views.tambah_admin, name='tambah_admin'),
-    path('edit-admin/<int:id_anggota>/', views.edit_admin, name='edit_admin'),
-    path('hapus-admin/<int:id_anggota>/', views.hapus_admin, name='hapus_admin'),
+    path('edit-admin/<int:id>/', views.edit_admin, name='edit_admin'),       # ✅ diganti jadi <int:id>
+    path('hapus-admin/<int:id>/', views.hapus_admin, name='hapus_admin'),     # ✅ diganti jadi <int:id>
 
     # --- Anggota ---
     path('tambah-anggota/', views.tambah_anggota, name='tambah_anggota'),
     path('edit-anggota/<int:id_anggota>/', views.edit_anggota, name='edit_anggota'),
     path('hapus-anggota/<int:id_anggota>/', views.hapus_anggota, name='hapus_anggota'),
     path('anggota/<int:id_anggota>/', views.detail_anggota, name='detail_anggota'),
-
 ]

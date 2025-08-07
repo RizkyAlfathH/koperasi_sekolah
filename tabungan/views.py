@@ -82,7 +82,7 @@ def tambah_tabungan(request):
 
         # Catat ke history
         HistoryTabungan.objects.create(
-            id_tabungan=tabungan,
+            tabungan=tabungan,
             tanggal=tanggal,
             jenis=jenis,
             jumlah=jumlah_decimal

@@ -20,6 +20,7 @@ from admin_koperasi import views as admin_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('koperasi_api.urls')), 
     path('', admin_views.login_view, name='login'),  
     path('admin-koperasi/', include('admin_koperasi.urls')),
     path('anggota/', include('anggota.urls')),
