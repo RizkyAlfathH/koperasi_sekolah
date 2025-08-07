@@ -14,6 +14,7 @@ class Pinjaman(models.Model):
     jatuh_tempo = models.DateField()
     status = models.CharField(max_length=15, default='belum lunas')
     sisa_pinjaman = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
+    lama_pinjaman = models.PositiveIntegerField(default=1)
 
     @property
     def jumlah_pinjaman(self):
@@ -84,39 +85,37 @@ class Pinjaman(models.Model):
 class HistoryPembayaran(models.Model):
     id_pinjaman = models.ForeignKey(Pinjaman, on_delete=models.CASCADE)
     tanggal_bayar = models.DateField()
-    jumlah_bayar = models.DecimalField(max_digits=12, decimal_places=2)
-    sisa_pinjaman = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
+    jumlah_bayar = models.DecimalField(max_digits=10, decimal_places=2)
+    sisa_pinjaman = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def save(self, *args, **kwargs):
         if not self.pk:
             pinjaman = self.id_pinjaman
 
-            # Hitung total cicilan yang sudah dibayar (jumlah pembayaran sebelumnya)
             total_cicilan_sebelumnya = HistoryPembayaran.objects.filter(
                 id_pinjaman=pinjaman
             ).aggregate(total=Sum('jumlah_bayar'))['total'] or Decimal('0')
 
-            # Total pokok pinjaman (jumlah_reguler + jumlah_usaha + jumlah_barang)
-            total_pokok = pinjaman.jumlah_pinjaman
+            jasa_bulan_ini = pinjaman.jasa_terbaru
+            jumlah_pokok_dibayar = self.jumlah_bayar - jasa_bulan_ini
 
-            # Hitung sisa pinjaman = total pokok pinjaman - total cicilan yang sudah dibayar + cicilan ini
-            sisa_baru = total_pokok - (total_cicilan_sebelumnya + self.jumlah_bayar)
+            if jumlah_pokok_dibayar < 0:
+                jumlah_pokok_dibayar = Decimal('0.00')
 
+            sisa_baru = pinjaman.sisa_pinjaman - jumlah_pokok_dibayar
             if sisa_baru < 0:
-                sisa_baru = Decimal('0')
+                sisa_baru = Decimal('0.00')
 
             self.sisa_pinjaman = sisa_baru
-
-            # Update sisa pinjaman di pinjaman
             pinjaman.sisa_pinjaman = sisa_baru
 
-            # Update status jika lunas
             if sisa_baru == 0:
                 pinjaman.status = 'lunas'
 
             pinjaman.save()
 
         super().save(*args, **kwargs)
+
 
 
     def __str__(self):
