@@ -26,9 +26,7 @@ urlpatterns = [
     path('anggota/', include('anggota.urls')),
     path('tabungan/', include('tabungan.urls')),  
     path('pinjaman/', include('pinjaman.urls')),
-    path('transaksi/', include('transaksi.urls')),
     path('penarikan/', include('penarikan.urls')),
-    path('shu/', include('shu.urls')),
     path('laporan/', include('laporan.urls')),
 ]
 

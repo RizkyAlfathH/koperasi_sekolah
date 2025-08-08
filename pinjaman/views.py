@@ -71,16 +71,12 @@ def tambah_pinjaman(request):
 def bayar_pinjaman(request, pk):
     pinjaman = get_object_or_404(Pinjaman, pk=pk)
 
-    total_sudah_bayar = HistoryPembayaran.objects.filter(id_pinjaman=pinjaman).aggregate(
-        total=Sum('jumlah_bayar')
-    )['total'] or Decimal('0')
+    cicilan_per_bulan = Decimal('0')
+    if pinjaman.lama_pinjaman:
+        cicilan_per_bulan = (pinjaman.jumlah_cicilan / pinjaman.lama_pinjaman).quantize(Decimal('0.01'))
 
-    sisa_bayar = pinjaman.jumlah_cicilan - total_sudah_bayar
-    if sisa_bayar < 0:
-        sisa_bayar = Decimal('0')
-
-    jumlah_cicilan = pinjaman.jumlah_cicilan or Decimal('0')
-    jumlah_bayar_default = sisa_bayar if sisa_bayar > 0 else jumlah_cicilan.quantize(Decimal('0.01'))
+    jasa_terbaru = pinjaman.jasa_terbaru or Decimal('0')
+    jumlah_bayar_default = (cicilan_per_bulan + jasa_terbaru).quantize(Decimal('0.01'))
 
     if request.method == 'POST':
         form = HistoryPembayaranForm(request.POST)
@@ -88,24 +84,13 @@ def bayar_pinjaman(request, pk):
             pembayaran = form.save(commit=False)
             pembayaran.id_pinjaman = pinjaman
             pembayaran.save()
-
-            # Cek dan update status pinjaman jika sudah lunas
-            total_bayar = HistoryPembayaran.objects.filter(id_pinjaman=pinjaman).aggregate(
-                total=Sum('jumlah_bayar')
-            )['total'] or Decimal('0')
-
-            if total_bayar >= pinjaman.jumlah_cicilan:
-                pinjaman.status = 'lunas'
-                pinjaman.sisa_pinjaman = Decimal('0')
-                pinjaman.save()
-
             return redirect('pinjaman:detail', pk=pk)
     else:
         form = HistoryPembayaranForm(initial={
-            'jumlah_bayar': jumlah_bayar_default,
+            'jumlah_bayar': jumlah_bayar_default
         })
 
     return render(request, 'pinjaman/bayar_pinjaman.html', {
         'form': form,
-        'pinjaman': pinjaman,
+        'pinjaman': pinjaman
     })

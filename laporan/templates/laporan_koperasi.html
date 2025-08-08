@@ -1,0 +1,71 @@
+<h2>Laporan Koperasi</h2>
+
+<h3>Total Uang di Koperasi</h3>
+<ul>
+  <li>Total Pinjaman: Rp{{ total_pinjaman|floatformat:2 }}</li>
+  <li>Total Simpanan: Rp{{ total_simpanan|floatformat:2 }}</li>
+</ul>
+
+<h3>Laporan Peminjaman Bulanan</h3>
+<table border="1">
+  <tr>
+    <th>Nama</th>
+    <th>Bulan</th>
+    <th>Total Pinjaman</th>
+  </tr>
+  {% for item in pinjaman_bulanan %}
+  <tr>
+    <td>{{ item.id_anggota__nama }}</td>
+    <td>{{ item.bulan|date:"F Y" }}</td>
+    <td>Rp{{ item.total|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Laporan Simpanan Bulanan</h3>
+<table border="1">
+  <tr>
+    <th>Nama</th>
+    <th>Bulan</th>
+    <th>Total Simpanan</th>
+  </tr>
+  {% for item in simpanan_bulanan %}
+  <tr>
+    <td>{{ item.id_anggota__nama }}</td>
+    <td>{{ item.bulan|date:"F Y" }}</td>
+    <td>Rp{{ item.total|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Laporan Peminjaman Tahunan</h3>
+<table border="1">
+  <tr>
+    <th>Nama</th>
+    <th>Tahun</th>
+    <th>Total Pinjaman</th>
+  </tr>
+  {% for item in pinjaman_tahunan %}
+  <tr>
+    <td>{{ item.id_anggota__nama }}</td>
+    <td>{{ item.tahun|date:"Y" }}</td>
+    <td>Rp{{ item.total|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Laporan Simpanan Tahunan</h3>
+<table border="1">
+  <tr>
+    <th>Nama</th>
+    <th>Tahun</th>
+    <th>Total Simpanan</th>
+  </tr>
+  {% for item in simpanan_tahunan %}
+  <tr>
+    <td>{{ item.id_anggota__nama }}</td>
+    <td>{{ item.tahun|date:"Y" }}</td>
+    <td>Rp{{ item.total|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+</table>

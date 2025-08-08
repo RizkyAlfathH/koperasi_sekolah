@@ -1,6 +1,8 @@
 <h2>Bayar Pinjaman</h2>
 
 <p><strong>Nama Anggota:</strong> {{ pinjaman.id_anggota }}</p>
+<p><strong>Jumlah Cicilan:</strong> Rp{{ pinjaman.jumlah_cicilan|floatformat:2 }}</p>
+<p><strong>Jasa Bulan Ini:</strong> Rp{{ pinjaman.jasa_terbaru|floatformat:2 }}</p>
 <p><strong>Sisa Pinjaman:</strong> Rp{{ pinjaman.sisa_pinjaman|floatformat:2 }}</p>
 
 <form method="post">
