@@ -12,6 +12,9 @@ class Admin(models.Model):
     password_hash = models.CharField(max_length=255)
     role = models.CharField(max_length=20, choices=role_choices, default='ketua')
 
+    class Meta:
+        db_table = 'admin_koperasi'
+
     def __str__(self):
         return self.username
 

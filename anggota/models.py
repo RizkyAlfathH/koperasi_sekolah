@@ -1,11 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password, check_password
 
 class Anggota(models.Model):
-    # Relasi ke user auth (untuk login)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
-    # Pilihan jenis kelamin dan status
     JK_CHOICES = [
         ('Laki-laki', 'Laki-laki'),
         ('Perempuan', 'Perempuan'),
@@ -25,6 +24,16 @@ class Anggota(models.Model):
     tgl_daftar = models.DateField()
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='aktif')
     alasan_tidak_aktif = models.TextField(max_length=255, null=True, blank=True)
+    password_hash = models.CharField(max_length=255, default='', blank=True)
+
+    class Meta:
+        db_table = 'anggota'
 
     def __str__(self):
         return f"{self.nama} ({self.nip})"
+
+    def set_password(self, raw_password):
+        self.password_hash = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password_hash)
